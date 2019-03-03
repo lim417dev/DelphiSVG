@@ -287,6 +287,7 @@ type
       Rects: PRectArray; RectCount: Integer); overload;
     procedure PaintTo(Graphics: TGPGraphics; Bounds: TGPRectF;
       Rects: PRectArray; RectCount: Integer); overload;
+    procedure PaintTo(DC: HDC; aWidth, aHeight : single); overload;
     function RenderToIcon(Size: Integer): HICON;
     function RenderToBitmap(Width, Height: Integer): HBITMAP;
 
@@ -2227,6 +2228,11 @@ begin
   finally
     M.Free;
   end;
+end;
+
+procedure TSVG.PaintTo(DC: HDC; aWidth, aHeight : single);
+begin
+  PaintTo(DC, MakeRect(0, 0, aWidth, aHeight), nil, 0);
 end;
 
 constructor TSVG.Create;
