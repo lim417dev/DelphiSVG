@@ -244,6 +244,7 @@ type
     FViewBox: TRectF;
     FFileName: string;
     FSize: TGPRectF;
+    FGrayscale : boolean;
 
     procedure SetViewBox(const Value: TRectF);
 
@@ -287,7 +288,7 @@ type
       Rects: PRectArray; RectCount: Integer); overload;
     procedure PaintTo(Graphics: TGPGraphics; Bounds: TGPRectF;
       Rects: PRectArray; RectCount: Integer); overload;
-    procedure PaintTo(DC: HDC; aWidth, aHeight : single); overload;
+    procedure PaintTo(DC: HDC; aLeft, aTop, aWidth, aHeight : single); overload;
     function RenderToIcon(Size: Integer): HICON;
     function RenderToBitmap(Width, Height: Integer): HBITMAP;
 
@@ -296,6 +297,7 @@ type
     property Source: string read FSource;
     property Angle: TFloat read FAngle write SetAngle;
     property ViewBox: TRectF read FViewBox write SetViewBox;
+    property Grayscale : boolean read FGrayscale write FGrayscale;
   end;
 
   TSVGContainer = class(TSVGBasic)
@@ -1111,8 +1113,16 @@ begin
       ReadStyle(Style);
   end;
 
-  FillColor := GetColor(FFillURI);
-  StrokeColor := GetColor(FStrokeURI);
+  if Root.Grayscale then
+  begin
+    FillColor   := GetGrayscale(GetColor(FFillURI));
+    StrokeColor := GetGrayscale(GetColor(FStrokeURI));
+  end else
+  begin
+    FillColor   := GetColor(FFillURI);
+    StrokeColor := GetColor(FStrokeURI);
+  end;
+
   FFillURI := ParseURI(FFillURI);
   FStrokeURI := ParseURI(FStrokeURI);
   ClipURI := ParseURI(FClipURI);
@@ -2230,9 +2240,9 @@ begin
   end;
 end;
 
-procedure TSVG.PaintTo(DC: HDC; aWidth, aHeight : single);
+procedure TSVG.PaintTo(DC: HDC; aLeft, aTop, aWidth, aHeight : single);
 begin
-  PaintTo(DC, MakeRect(0, 0, aWidth, aHeight), nil, 0);
+  PaintTo(DC, MakeRect(aLeft, aTop, aWidth, aHeight), nil, 0);
 end;
 
 constructor TSVG.Create;
@@ -2242,6 +2252,7 @@ begin
   FillChar(FInitialMatrix, SizeOf(FInitialMatrix), 0);
   FDX := 1;
   FDY := 1;
+  FGrayscale := False;
 end;
 
 destructor TSVG.Destroy;

@@ -32,13 +32,14 @@ var
   Colors: array [0..144] of TColorRef;
 
 function GetColor(const S: string): TColor;
+function GetGrayscale(aColor : TColor) : TColor;
 
 function ConvertColor(Color: TColor; Alpha: Byte): Cardinal;
 
 implementation
 
 uses
-  Winapi.Windows, Winapi.GDIPAPI, System.SysUtils;
+  Winapi.Windows, Winapi.GDIPAPI, System.SysUtils, Vcl.Graphics;
 
 function IsHex(const S: string): Boolean;
 var
@@ -207,6 +208,21 @@ begin
   begin
     Result := DecodeRGB(Color);
   end;
+end;
+
+// Converts any color to grayscale
+function GetGrayscale(aColor : TColor) : TColor;
+var
+  LGray : byte;
+begin
+  // Ignore reserved color values : "INHERIT" (-1) and "none" (-2) .
+  if (integer(aColor) = -1) or (integer(aColor) = -2) then exit(aColor);
+
+  // get the luminance according to https://www.w3.org/TR/AERT/#color-contrast
+  LGray  := round((0.299 * GetRValue(aColor)) + (0.587 * GetGValue(aColor)) + (0.114 * GetBValue(aColor)));
+
+  // set the result to the new grayscale color including the alpha info
+  Result := (aColor and $FF000000) or rgb(LGray, LGray, LGray);
 end;
 
 function ConvertColor(Color: TColor; Alpha: Byte): Cardinal;

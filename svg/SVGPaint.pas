@@ -136,12 +136,18 @@ begin
   LoadPercent(Node, 'offset', FStop);
 
   LoadString(Node, 'stop-color', S);
-  FStopColor := GetColor(S);
+  if GetRoot.Grayscale then
+    FStopColor := GetGrayscale(GetColor(S))
+  else
+    FStopColor := GetColor(S);
 
   if FStopColor = INHERIT then
   begin
     S := Style['stop-color'];
-    FStopColor := GetColor(S);
+    if GetRoot.Grayscale then
+      FStopColor := GetGrayscale(GetColor(S))
+    else
+      FStopColor := GetColor(S);
   end;
 
   S := Style['stop-opacity'];

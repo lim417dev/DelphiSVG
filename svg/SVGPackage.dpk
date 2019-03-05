@@ -30,7 +30,8 @@ package SVGPackage;
 
 requires
   rtl,
-  xmlrtl;
+  xmlrtl,
+  vcl;
 
 contains
   SVG in 'SVG.pas',
