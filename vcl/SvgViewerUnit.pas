@@ -16,11 +16,15 @@ type
     ListBox1: TListBox;
     Panel2: TPanel;
     Button1: TButton;
+    GrayscaleChk: TCheckBox;
+    RedChk: TCheckBox;
     procedure PaintBox1Paint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure ListBox1Click(Sender: TObject);
+    procedure GrayscaleChkClick(Sender: TObject);
+    procedure RedChkClick(Sender: TObject);
   private
     { Private declarations }
     FSVG: TSVG;
@@ -58,6 +62,7 @@ var
   FileName: string;
 begin
   FSVG := TSVG.Create;
+  FSVG.Grayscale := GrayscaleChk.Checked;
   Files := TDirectory.GetFiles(CPath, '*.svg');
   for FileName in Files do
   begin
@@ -72,6 +77,12 @@ begin
   FSVG.Free;
 end;
 
+procedure TForm1.GrayscaleChkClick(Sender: TObject);
+begin
+  FSVG.Grayscale := GrayscaleChk.Checked;
+  ListBox1Click(sender);
+end;
+
 procedure TForm1.ListBox1Click(Sender: TObject);
 begin
   FSVG.LoadFromFile(TPath.Combine(CPath, ListBox1.Items[ListBox1.ItemIndex]));
@@ -82,9 +93,18 @@ procedure TForm1.PaintBox1Paint(Sender: TObject);
 begin
   if FSVG.Count > 0 then
   begin
-    FSVG.PaintTo(PaintBox1.Canvas.Handle,
-      MakeRect(0.0, 0.0, FSVG.Width, FSVG.Height), nil, 0);
+    FSVG.PaintTo(PaintBox1.Canvas.Handle, MakeRect(0.0, 0.0, FSVG.Width, FSVG.Height), nil, 0);
   end;
+end;
+
+procedure TForm1.RedChkClick(Sender: TObject);
+begin
+  if RedChk.Checked then
+    FSVG.FixedColor := integer(clRed)
+   else
+    FSVG.FixedColor := -1;
+
+  ListBox1Click(sender);
 end;
 
 end.

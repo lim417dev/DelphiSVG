@@ -138,7 +138,7 @@ begin
   LoadString(Node, 'stop-color', S);
   if GetRoot.Grayscale then
     FStopColor := GetGrayscale(GetColor(S))
-  else
+   else
     FStopColor := GetColor(S);
 
   if FStopColor = INHERIT then
@@ -149,6 +149,11 @@ begin
     else
       FStopColor := GetColor(S);
   end;
+
+  if (GetRoot.FixedColor  <> -1)      and
+     (integer(FStopColor) <> INHERIT) and
+     (integer(FStopColor) <> -2)      then
+    FStopColor := GetRoot.FixedColor;
 
   S := Style['stop-opacity'];
   if (S <> '') then

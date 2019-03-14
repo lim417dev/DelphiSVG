@@ -233,18 +233,19 @@ type
 
   TSVG = class(TSVGBasic)
   strict private
-    FRootBounds: TGPRectF;
-    FDX: TFloat;
-    FDY: TFloat;
-    FInitialMatrix: TMatrix;
-    FSource: string;
-    FAngle: TFloat;
-    FAngleMatrix: TMatrix;
-    FRootMatrix: TMatrix;
-    FViewBox: TRectF;
-    FFileName: string;
-    FSize: TGPRectF;
-    FGrayscale : boolean;
+    FRootBounds    : TGPRectF;
+    FDX            : TFloat;
+    FDY            : TFloat;
+    FInitialMatrix : TMatrix;
+    FSource        : string;
+    FAngle         : TFloat;
+    FAngleMatrix   : TMatrix;
+    FRootMatrix    : TMatrix;
+    FViewBox       : TRectF;
+    FFileName      : string;
+    FSize          : TGPRectF;
+    FGrayscale     : boolean;
+    FFixedColor    : integer;
 
     procedure SetViewBox(const Value: TRectF);
 
@@ -292,12 +293,13 @@ type
     function RenderToIcon(Size: Integer): HICON;
     function RenderToBitmap(Width, Height: Integer): HBITMAP;
 
-    property InitialMatrix: TMatrix read FInitialMatrix write FInitialMatrix;
-    property SVGOpacity: TFloat write SetSVGOpacity;
-    property Source: string read FSource;
-    property Angle: TFloat read FAngle write SetAngle;
-    property ViewBox: TRectF read FViewBox write SetViewBox;
-    property Grayscale : boolean read FGrayscale write FGrayscale;
+    property InitialMatrix : TMatrix  read FInitialMatrix  write FInitialMatrix;
+    property SVGOpacity    : TFloat   write SetSVGOpacity;
+    property Source        : string   read FSource;
+    property Angle         : TFloat   read FAngle          write SetAngle;
+    property ViewBox       : TRectF   read FViewBox        write SetViewBox;
+    property Grayscale     : boolean  read FGrayscale      write FGrayscale;
+    property FixedColor    : integer  read FFixedColor     write FFixedColor;
   end;
 
   TSVGContainer = class(TSVGBasic)
@@ -1114,14 +1116,21 @@ begin
   end;
 
   if Root.Grayscale then
-  begin
-    FillColor   := GetGrayscale(GetColor(FFillURI));
-    StrokeColor := GetGrayscale(GetColor(FStrokeURI));
-  end else
-  begin
-    FillColor   := GetColor(FFillURI);
-    StrokeColor := GetColor(FStrokeURI);
-  end;
+    begin
+      FillColor   := GetGrayscale(GetColor(FFillURI));
+      StrokeColor := GetGrayscale(GetColor(FStrokeURI));
+    end
+   else
+    begin
+      FillColor   := GetColor(FFillURI);
+      StrokeColor := GetColor(FStrokeURI);
+    end;
+
+  if (Root.FixedColor <> -1) then
+    begin
+      if (integer(FillColor)   <> -1) and (integer(FillColor)   <> -2) then FillColor   := Root.FixedColor;
+      if (integer(StrokeColor) <> -1) and (integer(StrokeColor) <> -2) then StrokeColor := Root.FixedColor;
+    end;
 
   FFillURI := ParseURI(FFillURI);
   FStrokeURI := ParseURI(FStrokeURI);
@@ -2248,11 +2257,14 @@ end;
 constructor TSVG.Create;
 begin
   inherited;
+
   FStyles := TStyleList.Create;
   FillChar(FInitialMatrix, SizeOf(FInitialMatrix), 0);
-  FDX := 1;
-  FDY := 1;
-  FGrayscale := False;
+
+  FDX         := 1;
+  FDY         := 1;
+  FGrayscale  := False;
+  FFixedColor := -1;
 end;
 
 destructor TSVG.Destroy;

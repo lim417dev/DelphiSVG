@@ -4,7 +4,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 629
   ClientWidth = 805
-  Color = clBtnFace
+  Color = clWhite
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,6 +22,8 @@ object Form1: TForm1
     Width = 707
     Height = 629
     Align = alClient
+    Color = clWhite
+    ParentColor = False
     OnPaint = PaintBox1Paint
     ExplicitLeft = -6
     ExplicitTop = -1
@@ -35,10 +37,10 @@ object Form1: TForm1
     TabOrder = 0
     object ListBox1: TListBox
       Left = 1
-      Top = 42
+      Top = 96
       Width = 96
-      Height = 586
-      Align = alClient
+      Height = 532
+      Align = alBottom
       ItemHeight = 13
       TabOrder = 0
       OnClick = ListBox1Click
@@ -61,6 +63,24 @@ object Form1: TForm1
         TabOrder = 0
         OnClick = Button1Click
       end
+    end
+    object GrayscaleChk: TCheckBox
+      Left = 6
+      Top = 41
+      Width = 85
+      Height = 17
+      Caption = 'Grayscale'
+      TabOrder = 2
+      OnClick = GrayscaleChkClick
+    end
+    object RedChk: TCheckBox
+      Left = 6
+      Top = 64
+      Width = 83
+      Height = 17
+      Caption = 'RedChk'
+      TabOrder = 3
+      OnClick = RedChkClick
     end
   end
   object OpenDialog1: TOpenDialog

@@ -1,5 +1,7 @@
 program SvgViewer;
 
+{$R *.dres}
+
 uses
   Vcl.Forms,
   SvgViewerUnit in 'SvgViewerUnit.pas' {Form1};
